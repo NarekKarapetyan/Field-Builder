@@ -43,7 +43,7 @@
         <div class="attrnames">Label</div>
       </li>
       <li>
-        <input id="labelinput" type="text" value="Long-Answer" onchange="changelabel()"></input>
+        <input id="labelinput" type="text" value="Long-Answer" ></input>
       </li>
       <li>
         <div class="attrnames">Field options</div>
@@ -86,7 +86,7 @@
         <div class="attrnames">Default value</div>
       </li>
       <li>
-        <textarea id="defaultvalue" onchange="changethetextLA()"></textarea>
+        <textarea id="defaultvalueLA" ></textarea>
       </li>
     </ul>
   </div>
@@ -151,7 +151,7 @@
         <div class="attrnames">Default value</div>
       </li>
       <li>
-        <textarea id="defaultvalue" onchange="changethetext()"></textarea>
+        <textarea id="defaultvalueSA" onchange="changetextSA()"></textarea>
       </li>
     </ul>
   </div>
@@ -162,15 +162,17 @@
   <p id="placeholder">Move your elements here</p>
 
   <script>
-
+var long_id=0;
     function dragsLA(event) {
-      $('#form').append('<div class="longanswerdiv clickedLA"  > <label class="divlabels" id="textlabel">Long Answer</label><textarea id="mytext" class="longanstext clickedLA" ></textarea><p id="characters" style="position: relative; margin-top: -40px;    text-align: center;"></p</div>');
+        $('#form').append('<div class="longanswerdiv"  > <label class="divlabels" id="longanswerlabel'+long_id+'">Long Answer</label><textarea  class="longanstext clickedLA" id="longanswertext'+long_id+'" ></textarea><p style="position: relative; margin-top: -40px;    text-align: center;"></p></div>');
+        long_id++;
     }
     function dragsSA(event) {
       $('#form').append('<div class="shortanswerdiv clickedSA"><label class="divlabels" id="textlabel">Short Answer</label><textarea class="shortanstext clickedSA" ></textarea></div>');
 
     }
     function dragLA(event){
+      event.preventDefault();
       $('.longanswerdiv').css("display","inline-block");
     }
     function dragSA(event){
@@ -180,43 +182,12 @@
           function allowDrop(event) {
           event.preventDefault();
       }
+
       function drop(event) {
           event.preventDefault();
         $('#placeholder').css("display","none");
+}
 
-        $('.clickedLA').on("click",function(event) {
-          $('#elementdiv').css("display","none");
-          $('#attributedivShortAns').css("display","none");
-          $('#attributedivLongAns').css("display","inline-block");
-
-        });
-        $('.clickedSA').on("click", function(event) {
-          event.preventDefault();
-          $('#elementdiv').css("display","none");
-          $('#attributedivShortAns').css("display","inline-block");
-
-        });
-      }
-
-
-  function changethetextLA(){
-  document.getElementById('mytext').value = document.getElementById('defaultvalue').value;
-  }
-  function changesize(){
-    document.getElementById('defaultvalue').rows = document.getElementById('textsize').value;
-  }
-
-  function setmaxchar() {
-      document.getElementById('mytext').setAttribute("maxlength",document.getElementById('charinput').value);
-      document.getElementById('characters').innerHTML = "Max Characters: " + document.getElementById('charinput').value;
-  }
-
-  function setplaceholder() {
-    document.getElementById('mytext').placeholder = document.getElementById('placeholderinput').value;
-  }
-  function changelabel() {
-    document.getElementById('textlabel').innerHTML = document.getElementById('labelinput').value;
-  }
   $('#closeLA').click(function() {
     event.preventDefault();
       $('#attributedivLongAns').css("display","none");
@@ -230,8 +201,41 @@
 
 
 
+$(function(){
+  var lastclickedtextId;
+  var lastclickedlabelId;
+ var lastclickedlabel;
+  $(document).on('click', '.longanswerdiv', function(){
+      $('.longanswerdiv').removeClass('active');
+      $(this).addClass('active');
+      $('#elementdiv').css("display","none");
+      $('#attributedivShortAns').css("display","none");
+      $('#attributedivLongAns').css("display","inline-block");
+      lastclickedlabel = $(this).children("label");
+      lastclickedlabelId = lastclickedlabel.attr("id");
+  });
+
+  $('#labelinput').on("keyup",function() {
+          $('#'+lastclickedlabelId).text($('#labelinput').val());
+  });
 
 
+    $(document).on('click', '.clickedLA',function() {
+       lastclickedtextId = $(this).attr("id");
+        $('#defaultvalueLA').val($(this).val());
+       });
+
+    $('#defaultvalueLA').on("keyup",function() {
+            $('#'+lastclickedtextId).val($('#defaultvalueLA').val());
+});
+
+  $('.clickedSA').on("click", function(event) {
+    event.preventDefault();
+    $('#elementdiv').css("display","none");
+    $('#attributedivShortAns').css("display","inline-block");
+  });
+
+})
   </script>
 </body>
 </html>
